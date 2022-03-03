@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
 const path = require('path');
-const campground = require('./model/campground');
+const methodOverride = require('method-override');
 const PORT = 3000;
 
 const Campground = require('./model/campground');
@@ -20,6 +20,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride('_method'));
 
 app.get('/', (req, res) => {
 	res.render('home');
@@ -48,6 +49,20 @@ app.get('/campgrounds/:id', async (req, res) => {
 
 	res.render('campgrounds/show', { campground });
 });
+
+app.get('/campgrounds/:id/edit', async (req, res) => {
+  const { id } = req.params;
+	const campground = await Campground.findById(id);
+
+  res.render('campgrounds/edit', { campground });
+})
+
+app.put('/campgrounds/:id', async(req, res) => {
+  const { id } = req.params;
+  const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
+
+  res.redirect(`/campgrounds/${campground._id}`);
+})
 
 app.listen(PORT, () => {
 	console.log(`LISTENING ON PORT ${PORT}`);
