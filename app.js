@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
+const ejsMate = require('ejs-mate');
 const app = express();
 const path = require('path');
 const methodOverride = require('method-override');
@@ -17,10 +18,11 @@ db.once('open', () => {
 	console.log('Database connected!');
 });
 
+app.engine('ejs', ejsMate)
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(morgan('tiny'));
+app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 
