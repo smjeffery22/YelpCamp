@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 const ejsMate = require('ejs-mate');
-const joi = require('joi');
+const { campgroundSchema } = require('./schemas');
 const catchAsync = require('./utils/catchAsync');
 const expressError = require('./utils/ExpressError');
 const app = express();
@@ -30,32 +30,27 @@ app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 
-app.get('/', (req, res) => {
-	res.render('home');
-});
-
-app.post('/campgrounds', catchAsync(async (req, res, next) => {
-	// if (!req.body.campground) throw new ExpressError('Invalid Campground Data', 400);
-	
-	// not validation through Mongoose
-	// validation of data before data is sent to db
-	const campgroundSchema = joi.object({
-		campground: joi.object({
-			title: joi.string().required(),
-			price: joi.number().required().min(0),
-			image: joi.string().required(),
-			location: joi.string().required(),
-			description: joi.string().required()
-		}).required()
-	})
+// not validation through Mongoose
+// validation of data before data is sent to db
+const validateCampground = (req, res, next) => {
 	const { error } = campgroundSchema.validate(req.body);
 
 	if (error) {
 		const msg = error.details.map(err => err.message).join(',')
-		console.log('----', msg)
 		throw new ExpressError(msg, 400);
+	}	else {
+		// to continue the code in route handler
+		next();
 	}
+}
 
+app.get('/', (req, res) => {
+	res.render('home');
+});
+
+app.post('/campgrounds', validateCampground, catchAsync(async (req, res, next) => {
+	// if (!req.body.campground) throw new ExpressError('Invalid Campground Data', 400);
+	
 	const campground = new Campground(req.body.campground);
 	await campground.save();
 	console.log(campground)
@@ -87,7 +82,7 @@ app.get('/campgrounds/:id/edit', catchAsync(async (req, res) => {
 	res.render('campgrounds/edit', { campground });
 }));
 
-app.put('/campgrounds/:id', catchAsync(async (req, res) => {
+app.put('/campgrounds/:id', validateCampground, catchAsync(async (req, res) => {
 	const { id } = req.params;
 	const campground = await Campground.findByIdAndUpdate(id, {
 		...req.body.campground,
