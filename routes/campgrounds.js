@@ -7,8 +7,8 @@ const Campground = require('../models/campground');
 const { isLoggedIn, isAuthor, validateCampground } = require('../middleware');
 
 router.route('/')
-.post(isLoggedIn, validateCampground, catchAsync(campgrounds.renderNewForm))
-.get(catchAsync(campgrounds.index))
+	.post(isLoggedIn, validateCampground, catchAsync(campgrounds.renderNewForm))
+	.get(catchAsync(campgrounds.index))
 
 router.get('/new', isLoggedIn, campgrounds.createCampground);
 
