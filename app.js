@@ -9,7 +9,7 @@ const methodOverride = require('method-override');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const ExpressError = require('./utils/ExpressError');
-const User = require('./model/user')
+const User = require('./models/user')
 
 const PORT = 3000;
 
