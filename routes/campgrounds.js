@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/ '});
+const { storage } = require('../cloudinary');
+const upload = multer({ storage }); // upload to the storage in Cloudinary
 
 const campgrounds = require('../controllers/campgrounds')
 const catchAsync = require('../utils/catchAsync');
