@@ -32,4 +32,10 @@ router.get('/login', (req, res) => {
   res.render('users/login');
 });
 
+router.get('/logout', (req, res) => {
+  req.logout();
+  req.flash('success', 'You have been logged out.');
+  res.redirect('/campgrounds');
+});
+
 module.exports = router;
