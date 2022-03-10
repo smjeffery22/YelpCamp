@@ -6,19 +6,21 @@ module.exports.index = async (req, res) => {
 	res.render('campgrounds/index', { campgrounds });
 };
 
-module.exports.renderNewForm = async (req, res, next) => {
-	// if (!req.body.campground) throw new ExpressError('Invalid Campground Data', 400);
-
+module.exports.createCampground = async (req, res, next) => {
 	const campground = new Campground(req.body.campground);
+
+	// pull out image url and filename from req.files
+	// store in array then add to Campground model
+	campground.images = req.files.map(file => ({ url: file.path, filename: file.filename }))
 	campground.author = req.user._id; // req.user from passport => user property
 	await campground.save();
-
+	console.log('------------', campground);
 	req.flash('success', 'Successfully created a new campground!');
 
 	res.redirect(`/campgrounds/${campground._id}`);
 };
 
-module.exports.createCampground = (req, res) => {
+module.exports.renderNewForm = (req, res) => {
 	res.render('campgrounds/new');
 };
 

@@ -10,14 +10,10 @@ const Campground = require('../models/campground');
 const { isLoggedIn, isAuthor, validateCampground } = require('../middleware');
 
 router.route('/')
-	// .post(isLoggedIn, validateCampground, catchAsync(campgrounds.renderNewForm))
-	.post(upload.array('image'), (req, res) => {
-		console.log(req.body, req.files)
-		res.send('Uploaded')
-	})
+	.post(isLoggedIn, upload.array('image'), validateCampground, catchAsync(campgrounds.createCampground))
 	.get(catchAsync(campgrounds.index))
 
-router.get('/new', isLoggedIn, campgrounds.createCampground);
+router.get('/new', isLoggedIn, campgrounds.renderNewForm);
 
 router.route('/:id')
 	.get(catchAsync(campgrounds.showCampground))
