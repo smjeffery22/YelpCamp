@@ -29,8 +29,13 @@ router.get('/register', (req, res) => {
 });
 
 router.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), (req, res) => {
+  // upon login, redirect user to the url the user was visiting
+  const redirectUrl = req.session.returnTo || '/campgrounds';
+  // delete returnTo from session upon login
+  delete req.session.returnTo;
+
   req.flash('success', 'Welcome back!');
-  res.redirect('/campgrounds');
+  res.redirect(redirectUrl);
 });
 
 router.get('/login', (req, res) => {
