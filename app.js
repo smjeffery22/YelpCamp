@@ -12,6 +12,8 @@ const flash = require('connect-flash');
 const methodOverride = require('method-override');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
+const mongoSanitize = require('express-mongo-sanitize');
+
 const ExpressError = require('./utils/ExpressError');
 const User = require('./models/user')
 
@@ -55,6 +57,7 @@ app.use(session(sessionConfig))
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(mongoSanitize());
 
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
@@ -63,6 +66,7 @@ passport.deserializeUser(User.deserializeUser());
 // middleware for all req/res
 // properties attached is res.locals are available in all EJS views
 app.use((req, res, next) => {
+	console.log(req.query)
 	res.locals.currentUser = req.user;
 	res.locals.success = req.flash('success');
 	res.locals.error = req.flash('error');
