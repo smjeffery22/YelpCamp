@@ -17,20 +17,24 @@ module.exports.createCampground = async (req, res, next) => {
 		limit: 1
 	}).send();
 
-	// returns [longitude, latitude]
-	res.send(geoData.body.features[0].geometry.coordinates);
+	// geoData.body.features[0].geometry
+	//	returns GeoJSON
+	// geoData.body.features[0].geometry.coordinates
+	//	returns [longitude, latitude]
+	// res.send(geoData.body.features[0].geometry);
 
-	// const campground = new Campground(req.body.campground);
+	const campground = new Campground(req.body.campground);
+	campground.geometry = geoData.body.features[0].geometry;
+	// pull out image url and filename from req.files
+	// store in array then add to Campground model
+	campground.images = req.files.map(file => ({ url: file.path, filename: file.filename }))
+	campground.author = req.user._id; // req.user from passport => user property
+	
+	await campground.save();
 
-	// // pull out image url and filename from req.files
-	// // store in array then add to Campground model
-	// campground.images = req.files.map(file => ({ url: file.path, filename: file.filename }))
-	// campground.author = req.user._id; // req.user from passport => user property
-	// await campground.save();
-	// console.log('------------', campground);
-	// req.flash('success', 'Successfully created a new campground!');
+	req.flash('success', 'Successfully created a new campground!');
 
-	// res.redirect(`/campgrounds/${campground._id}`);
+	res.redirect(`/campgrounds/${campground._id}`);
 };
 
 module.exports.renderNewForm = (req, res) => {
