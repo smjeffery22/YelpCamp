@@ -66,7 +66,6 @@ passport.deserializeUser(User.deserializeUser());
 // middleware for all req/res
 // properties attached is res.locals are available in all EJS views
 app.use((req, res, next) => {
-	console.log(req.query)
 	res.locals.currentUser = req.user;
 	res.locals.success = req.flash('success');
 	res.locals.error = req.flash('error');
