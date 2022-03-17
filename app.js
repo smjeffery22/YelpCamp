@@ -18,7 +18,7 @@ const MongoDBStore = require('connect-mongo');
 const ExpressError = require('./utils/ExpressError');
 const User = require('./models/user')
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 const app = express();
 
