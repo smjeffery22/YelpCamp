@@ -5,7 +5,6 @@ if (process.env.NODE_ENV != 'production') {
 const express = require('express');
 const session = require('express-session');
 const mongoose = require('mongoose');
-const morgan = require('morgan');
 const ejsMate = require('ejs-mate');
 const path = require('path');
 const flash = require('connect-flash');
@@ -40,7 +39,6 @@ app.engine('ejs', ejsMate);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
